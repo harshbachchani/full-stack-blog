@@ -1,8 +1,9 @@
 import { ApiError } from "../utils/ApiError.js";
 
-const errHandler = (err, req, res, next) => {
+const errHandler = (err, request, reply) => {
+  console.log(err);
   if (err instanceof ApiError) {
-    return res.status(err.statuscode).json({
+    return reply.status(err.statuscode).send({
       success: err.success,
       statusCode: err.statuscode,
       message: err.message,
@@ -10,7 +11,7 @@ const errHandler = (err, req, res, next) => {
     });
   }
 
-  return res.status(500).json({
+  return reply.status(500).send({
     success: false,
     message: "Internal Server Error",
     errors: [],
