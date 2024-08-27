@@ -1,17 +1,17 @@
 import { errHandler } from "./middlewares/err.middleware.js";
 import Fastify from "fastify";
+import FastifyFormbody from "@fastify/formbody";
 import cors from "@fastify/cors";
-// import FastifyFormbody from "fastify-formbody";
 const app = Fastify();
 
 app.register(cors, {
   origin: process.env.CORS_ORIGIN,
 });
-app.register();
+
 app.get("/", (request, reply) => {
   reply.send("Hello World");
 });
-// app.register(FastifyFormbody, { bodyLimit: 40 });
+app.register(FastifyFormbody, {});
 import userRouter from "./routes/user.routes.js";
 
 app.register(userRouter, { prefix: "/api/v1/user" });

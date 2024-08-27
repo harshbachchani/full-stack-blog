@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import Crypto from "crypto-js";
 
 const userSchema = new Schema(
   {
@@ -28,12 +28,20 @@ const userSchema = new Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+  this.password = await Crypto.AES.encrypt(
+    this.password,
+    process.env.CRYPTO_SECRET_KEY
+  ).toString();
   next();
 });
 
 userSchema.methods.isPassWordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  const decryptedPassword = await Crypto.AES.decrypt(
+    this.password,
+    process.env.CRYPTO_SECRET_KEY
+  ).toString(Crypto.enc.Utf8);
+
+  return decryptedPassword == password;
 };
 
 userSchema.methods.generateAcessToken = async function () {
