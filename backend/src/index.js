@@ -6,10 +6,10 @@ connectDB()
   .then((value) => {
     app.listen({ port: process.env.PORT }, function (err, address) {
       if (err) {
-        app.log.error(err);
+        console.log(err);
         process.exit(1);
       } else {
-        app.log.info(`Server listening on ${address}`);
+        console.log(`Server listening on ${address}`);
       }
     });
   })
