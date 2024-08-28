@@ -9,7 +9,7 @@ cloudinary.config({
 const uploadOnCloudinary = async (buffer) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: "blog-project" }, // Specify the folder name here
+      { folder: "blogProject" },
       (error, result) => {
         if (error) {
           reject(error);

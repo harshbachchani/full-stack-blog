@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const articleSchema = new Schema(
+const postSchema = new Schema(
   {
     title: {
       type: String,
@@ -21,6 +21,12 @@ const articleSchema = new Schema(
       required: [true, "Status is required"],
       index: true,
     },
+    postId: {
+      type: Number,
+      unique: true,
+      index: true,
+      required: [true, "PostId is required"],
+    },
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
@@ -29,4 +35,4 @@ const articleSchema = new Schema(
   { timestamps: true }
 );
 
-export const Article = mongoose.model("Article", articleSchema);
+export const Post = mongoose.model("Post", postSchema);

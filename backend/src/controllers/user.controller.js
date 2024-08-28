@@ -11,25 +11,30 @@ const registerUser = async (request, reply) => {
     }
     const existingUser = await User.findOne({ email });
     if (existingUser) throw new ApiError(402, "User Already Exists");
+
     const user = await User.create({ fullname, email, password });
     const accessToken = await user.generateAcessToken();
-    const refreshToken = await user.generateRefreshToken();
+
     const res = JSON.parse(JSON.stringify(user));
     return reply
       .status(201)
       .send(
         new ApiResponse(
           201,
-          { ...res, accessToken, refreshToken },
+          { ...res, accessToken },
           "User Registered Successfully"
         )
       );
   } catch (error) {
-    throw new ApiError(
-      error.statuscode || 500,
-      error.message || "Something Went Wrong",
-      error
-    );
+    return reply
+      .status(error?.statuscode || 500)
+      .send(
+        new ApiError(
+          error?.statuscode || 500,
+          error?.message || "Something Went Wrong",
+          error
+        )
+      );
   }
 };
 
@@ -43,23 +48,26 @@ const loginUser = async (request, reply) => {
     const isMatched = await user.isPassWordCorrect(password);
     if (!isMatched) throw new ApiError(400, "Incorrect Credentials");
     const accessToken = await user.generateAcessToken();
-    const refreshToken = await user.generateRefreshToken();
     const res = JSON.parse(JSON.stringify(user));
     return reply
       .status(200)
       .send(
         new ApiResponse(
           200,
-          { ...res, accessToken, refreshToken },
+          { ...res, accessToken },
           "User Logged In Successfully"
         )
       );
   } catch (error) {
-    throw new ApiError(
-      error.statuscode || 500,
-      error.message || "Something Went Wrong",
-      error
-    );
+    return reply
+      .status(error?.statuscode || 500)
+      .send(
+        new ApiError(
+          error?.statuscode || 500,
+          error?.message || "Something Went Wrong",
+          error
+        )
+      );
   }
 };
 export { registerUser, loginUser };
