@@ -20,9 +20,13 @@ await app.register(io, {
 
 app.register(multer.contentParser);
 
-app.get("/gets", (request, reply) => {
+app.get("/", (request, reply) => {
   console.log("Hii there ");
   app.io.emit("1234", "Hii there I am socket");
+});
+app.get("/gets", (request, reply) => {
+  console.log("Hii there ");
+  app.io.emit("123456", "Hii there I am socket");
 });
 app.register(FastifyFormbody, {});
 import userRouter from "./routes/user.routes.js";
