@@ -4,7 +4,7 @@ import connectDB from "./db/index.js";
 import app from "./app.js";
 connectDB()
   .then(async (value) => {
-    await app.listen({ port: 2000 }, function (err, address) {
+    await app.listen({ port: process.env.PORT }, function (err, address) {
       if (err) {
         console.log(err);
         process.exit(1);
