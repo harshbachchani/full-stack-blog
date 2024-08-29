@@ -1,5 +1,16 @@
 import mongoose, { Schema } from "mongoose";
 
+const counterSchema = new Schema({
+  _id: {
+    type: String,
+  },
+  seq: {
+    type: Number,
+    default: 0,
+  },
+});
+
+export const Counter = mongoose.model("Counter", counterSchema);
 const postSchema = new Schema(
   {
     title: {
@@ -25,7 +36,6 @@ const postSchema = new Schema(
       type: Number,
       unique: true,
       index: true,
-      required: [true, "PostId is required"],
     },
     user: {
       type: mongoose.Types.ObjectId,
@@ -35,4 +45,21 @@ const postSchema = new Schema(
   { timestamps: true }
 );
 
+postSchema.pre("save", async function (next) {
+  const doc = this;
+  if (doc.isNew) {
+    try {
+      const counter = await Counter.findOneAndUpdate(
+        { _id: "Post" },
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      doc.postId = counter.seq;
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
+});
 export const Post = mongoose.model("Post", postSchema);

@@ -15,6 +15,7 @@ export default async function (fastify, options) {
   );
   fastify.put("/:postId", { preHandler: fastify.verifyJWT }, updatePost);
   fastify.delete("/:postId", { preHandler: fastify.verifyJWT }, deletePost);
-  fastify.get("/:postId", { preHandler: fastify.verifyJWT }, getPost);
   fastify.get("/all", { preHandler: fastify.verifyJWT }, getAllPosts);
+
+  fastify.get("/:postId", { preHandler: fastify.verifyJWT }, getPost);
 }
