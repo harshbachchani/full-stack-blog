@@ -20,14 +20,6 @@ await app.register(io, {
 
 app.register(multer.contentParser);
 
-app.get("/", (request, reply) => {
-  console.log("Hii there ");
-  app.io.emit("1234", "Hii there I am socket");
-});
-app.get("/gets", (request, reply) => {
-  console.log("Hii there ");
-  app.io.emit("123456", "Hii there I am socket");
-});
 app.register(FastifyFormbody, {});
 import userRouter from "./routes/user.routes.js";
 import postRouter from "./routes/post.routes.js";
@@ -43,9 +35,21 @@ app.register(
 );
 app.ready((err) => {
   if (err) throw err;
-  app.io.on("connect", (socket) =>
-    console.info("Socket connected!", socket.id)
-  );
+
+  const defaultNamespace = app.io.of("/"); // Using default namespace
+  defaultNamespace.on("connect", (socket) => {
+    console.info("Socket connected!", socket.id);
+
+    socket.on("disconnect", () => {
+      console.info("Socket disconnected!", socket.id);
+    });
+  });
+
+  app.get("/socket/testing", (request, reply) => {
+    console.log("Hii there on /gets");
+    defaultNamespace.emit("123456", "Hii there I am socket");
+    reply.send({ message: "Message sent to socket from /gets!" });
+  });
 });
 app.setErrorHandler(errHandler);
 export default app;
