@@ -35,7 +35,7 @@ app.register(
 );
 app.get("/socket", (request, reply) => {
   console.log("Hii there on /gets");
-  defaultNamespace.emit("123456", "Hii there I am socket");
+  app.io.of("/").emit("123456", "Hii there I am socket");
   reply.send({ message: "Message sent to socket from /gets!" });
 });
 app.ready((err) => {
