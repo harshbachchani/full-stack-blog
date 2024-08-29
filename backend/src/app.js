@@ -33,22 +33,20 @@ app.register(
   },
   { prefix: "/api/v1/post" }
 );
+app.get("/socket", (request, reply) => {
+  console.log("Hii there on /gets");
+  defaultNamespace.emit("123456", "Hii there I am socket");
+  reply.send({ message: "Message sent to socket from /gets!" });
+});
 app.ready((err) => {
   if (err) throw err;
 
-  const defaultNamespace = app.io.of("/"); // Using default namespace
+  const defaultNamespace = app.io.of("/socket");
   defaultNamespace.on("connect", (socket) => {
     console.info("Socket connected!", socket.id);
-
     socket.on("disconnect", () => {
       console.info("Socket disconnected!", socket.id);
     });
-  });
-
-  app.get("/socket/testing", (request, reply) => {
-    console.log("Hii there on /gets");
-    defaultNamespace.emit("123456", "Hii there I am socket");
-    reply.send({ message: "Message sent to socket from /gets!" });
   });
 });
 app.setErrorHandler(errHandler);
