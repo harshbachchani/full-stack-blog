@@ -33,21 +33,30 @@ app.register(
   },
   { prefix: "/api/v1/post" }
 );
-app.get("/socket", (request, reply) => {
-  console.log("Hii there on /gets");
-  app.io.of("/").emit("123456", "Hii there I am socket");
-  reply.send({ message: "Message sent to socket from /gets!" });
-});
-app.ready((err) => {
-  if (err) throw err;
 
-  const defaultNamespace = app.io.of("/socket");
-  defaultNamespace.on("connect", (socket) => {
-    console.info("Socket connected!", socket.id);
-    socket.on("disconnect", () => {
-      console.info("Socket disconnected!", socket.id);
-    });
+const Socket = app.io.of("/socket");
+Socket.on("connect", (node) => {
+  console.log("/socket is connected");
+  node.emit("1234", "Hello there I am socket");
+  node.on("disconnect", () => {
+    console.log("disconnected");
   });
 });
+app.io.of("/testing").on("connect", (socket) => {
+  console.log("/socket is connected");
+  socket.emit("1234", "Hello there I am socket");
+  socket.on("disconnect", () => {
+    console.log("disconnected");
+  });
+});
+// app.ready((err) => {
+//   if (err) throw err;
+//   app.io.of("/").on("connect", (socket) => {
+//     console.info("Socket connected!", socket.id);
+//     socket.on("disconnect", () => {
+//       console.info("Socket disconnected!", socket.id);
+//     });
+//   });
+// });
 app.setErrorHandler(errHandler);
 export default app;
